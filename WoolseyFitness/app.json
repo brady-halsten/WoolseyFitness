@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "WoolseyFitness",
+    "name": "Woolsey Fitness",
     "slug": "WoolseyFitness",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/wzf_new_logo.jpg",
     "scheme": "woolseyfitness",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/wzf_new_logo.jpg"
     },
     "android": {
       "adaptiveIcon": {
