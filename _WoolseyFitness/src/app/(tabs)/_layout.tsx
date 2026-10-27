@@ -20,10 +20,11 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title:"Home",
           headerTitle: "Woolsey Fitness",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
-              name={focused ? "flash-sharp" : "flash-outline"}
+              name={focused ? "home-sharp" : "home-outline"}
               size={30}
               color={color}
             />
@@ -34,6 +35,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="about"
         options={{
+          title:"About",
           headerTitle: "About",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
