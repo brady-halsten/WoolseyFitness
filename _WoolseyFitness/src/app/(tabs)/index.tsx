@@ -5,7 +5,6 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Text style ={styles.text}>Welcome to Woolsey Fitness!</Text>
-      <Link href={"/about"} style ={styles.button}>About Us!</Link>
     </View>
   );
 }
