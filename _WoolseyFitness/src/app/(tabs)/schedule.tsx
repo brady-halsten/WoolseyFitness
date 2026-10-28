@@ -28,31 +28,3 @@ export default function Schedule() {
    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "black"
-  },
-  headerRow: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'right',
-    justifyContent: 'space-betweeen',
-   },
-  logo: {
-    width: 130,
-    height: 130,
-    resizeMode: 'contain',
-   },
-  text: {
-  color: "white"
-  },
-  button: {
-  fontSize: 20,
-  textDecorationLine: "underline",
-  color: "#fff"
-  }
-});

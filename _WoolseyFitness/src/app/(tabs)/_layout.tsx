@@ -23,11 +23,26 @@ export default function TabsLayout() {
         options={{
           title: "Home",
           headerShown: false,
-          tabBarIcon: ({ focused, color }) => (
+          tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? "home-sharp" : "home-outline"}
               size={30}
-              color={color}
+              color={focused ? "#ffd33d" : "#999"}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="routines"
+        options={{
+          title: "Routines",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? "barbell" : "barbell-outline"}
+              size={30}
+              color={focused ? "#ffd33d" : "#999"}
             />
           ),
         }}
@@ -38,11 +53,11 @@ export default function TabsLayout() {
         options={{
           title: "Schedule",
           headerShown: false,
-          tabBarIcon: ({ focused, color }) => (
+          tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? "calendar" : "calendar-outline"}
               size={30}
-              color={color}
+              color={focused ? "#ffd33d" : "#999"}
             />
           ),
         }}
@@ -53,7 +68,7 @@ export default function TabsLayout() {
         options={{
           title: "About",
           headerShown: false,
-          tabBarIcon: ({ focused, color }) => (
+          tabBarIcon: ({ focused }) => (
             <Ionicons
               name={
                 focused
@@ -61,7 +76,7 @@ export default function TabsLayout() {
                   : "information-circle-outline"
               }
               size={30}
-              color={color}
+              color={focused ? "#ffd33d" : "#999"}
             />
           ),
         }}
