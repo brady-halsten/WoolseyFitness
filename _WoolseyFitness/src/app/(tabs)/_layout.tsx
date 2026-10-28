@@ -8,20 +8,21 @@ export default function TabsLayout() {
       screenOptions={{
         tabBarActiveTintColor: "#ffd33d",
         headerStyle: {
-         backgroundColor: "#080808",
+          backgroundColor: "#000",
         },
         headerShadowVisible: false,
         headerTintColor: "#fff",
         tabBarStyle: {
-         backgroundColor: "#080808",
+          backgroundColor: "#000",
         },
+        tabBarInactiveTintColor: "#999",
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title:"Home",
-          headerTitle: "Woolsey Fitness",
+          title: "Home",
+          headerShown: false,
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
               name={focused ? "home-sharp" : "home-outline"}
@@ -33,13 +34,32 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="about"
+        name="schedule"
         options={{
-          title:"About",
-          headerTitle: "About",
+          title: "Schedule",
+          headerShown: false,
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
-              name={focused ? "information-circle" : "information-circle-outline"}
+              name={focused ? "calendar" : "calendar-outline"}
+              size={30}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="about"
+        options={{
+          title: "About",
+          headerShown: false,
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={
+                focused
+                  ? "information-circle"
+                  : "information-circle-outline"
+              }
               size={30}
               color={color}
             />
