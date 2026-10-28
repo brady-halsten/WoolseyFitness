@@ -18,4 +18,5 @@ export const Spacing = {
 export const Sizes = {
   logo: 80,
   icon: 30,
+  splash: 150,
 };
