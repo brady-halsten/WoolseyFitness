@@ -47,9 +47,9 @@ export const GlobalStyles = StyleSheet.create({
     marginTop: 15,
     padding: Spacing.sm,
   },
-  description: {
+  dateText: {
     color: "#aaaaaa",
-    fontSize: 15,
+    fontSize: 12,
     marginBottom: 28,
   },
 

@@ -26,7 +26,7 @@ const formattedDate = today.toLocaleDateString("en-US", {
           />
           </View>
           <View>
-            <Text style={GlobalStyles.text}>
+            <Text style={GlobalStyles.dateText}>
               {formattedDate}
             </Text>
           </View>
