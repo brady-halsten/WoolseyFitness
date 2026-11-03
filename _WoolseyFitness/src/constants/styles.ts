@@ -37,6 +37,15 @@ export const GlobalStyles = StyleSheet.create({
     color: Colors.text,
     fontSize: 24,
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  subtitle: {
+    color: Colors.text,
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "Left",
+    marginTop: 15,
+    padding: Spacing.sm,
   },
   description: {
     color: "#aaaaaa",
@@ -93,4 +102,12 @@ export const GlobalStyles = StyleSheet.create({
     height: '100%', // Fills the parent imageWrapper completely
     borderRadius: 20,
   },
+  textContainer: {
+    flex: 0.5,
+    padding: Spacing.md,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+
+  }
 });
