@@ -43,7 +43,7 @@ export const GlobalStyles = StyleSheet.create({
     color: Colors.text,
     fontSize: 20,
     fontWeight: "bold",
-    textAlign: "Left",
+    textAlign: "left",
     marginTop: 15,
     padding: Spacing.sm,
   },
@@ -103,6 +103,20 @@ export const GlobalStyles = StyleSheet.create({
     height: '100%', // Fills the parent imageWrapper completely
     borderRadius: 20,
   },
+  keyboardView: {
+    flex: 1,
+  },
+  
+  container: {
+    flex: 1,
+    width: "100%",
+    padding: Spacing.md,
+  },
+  
+  form: {
+    width: "100%",
+    gap: Spacing.sm,
+  },
   textContainer: {
     flex: 0.5,
     padding: Spacing.md,
@@ -111,4 +125,31 @@ export const GlobalStyles = StyleSheet.create({
     marginTop: 10,
 
   }
+});
+
+export const bioImage = StyleSheet.create({
+  imageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: Spacing.md,
+    marginVertical: Spacing.md,
+    gap: Spacing.md,
+  },
+  image: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    resizeMode: "cover",
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    flexShrink: 0,
+  },
+  bioText: {
+    flex: 1,
+    color: Colors.text,
+    fontSize: 14,
+    lineHeight: 21,
+    flexShrink: 1,
+  },
 });

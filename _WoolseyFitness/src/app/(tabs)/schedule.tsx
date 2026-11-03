@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { GlobalStyles } from "@/constants/styles";
 import { Sizes } from "@/constants/theme";
 import ClassCalendar from "@/components/Booking/ClassCalendar";
+import { getFormattedDate } from "../utils/date";
 
 export default function Schedule() {
   return (
@@ -20,6 +21,12 @@ export default function Schedule() {
               }}
             />
           </View>
+          <View>
+            <Text style={GlobalStyles.dateText}>
+              {getFormattedDate()}
+            </Text>
+          </View>
+          
 
           <View style={{ width: "100%" }}>
             <Text style={GlobalStyles.title}>

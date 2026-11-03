@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { GlobalStyles } from "@/constants/styles";
 import { Sizes } from "@/constants/theme";
+import { getFormattedDate } from "@/app/utils/date";
 
 export default function RoutinesIndex() {
   return (
@@ -18,6 +19,11 @@ export default function RoutinesIndex() {
           }}
         />
       </View>
+      <View>
+            <Text style={GlobalStyles.dateText}>
+              {getFormattedDate()}
+            </Text>
+          </View>
 
       <View style={GlobalStyles.centeredScreen}>
         <Text style={GlobalStyles.title}>Choose a Routine</Text>

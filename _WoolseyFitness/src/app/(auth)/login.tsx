@@ -55,7 +55,7 @@ export default function LoginScreen() {
               WELCOME BACK
             </Text>
 
-            <Text style={GlobalStyles.description}>
+            <Text style={GlobalStyles.dateText}>
               Log in to continue your fitness journey.
             </Text>
 
