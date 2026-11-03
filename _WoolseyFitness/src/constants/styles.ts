@@ -93,9 +93,10 @@ export const GlobalStyles = StyleSheet.create({
     letterSpacing: 1,
   },
   imageWrapper: {
-    width: '80%',
-    height: 150, // Explicit height constraint for the flex item
+    width: '100%',
+    height: 250, // Explicit height constraint for the flex item
     marginTop: 28,
+    alignItems: "center",
   },
   featuredImage: {
     width: '100%',

@@ -1,11 +1,17 @@
 import {Link} from "expo-router";
-import { Text, View, Image, StyleSheet,ScrollView } from "react-native";
+import { Text, View, Image, StyleSheet,ScrollView} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GlobalStyles } from "@/constants/styles";
 import { Sizes } from "@/constants/theme";
-import { bannerImage } from "@/components/bannerImage";
 
 export default function Index() {
+  const today = new Date();
+
+const formattedDate = today.toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+});
   return (
   <ScrollView style={GlobalStyles.screen}>
   <SafeAreaView style={GlobalStyles.screen}>
@@ -19,8 +25,13 @@ export default function Index() {
             }}
           />
           </View>
+          <View>
+            <Text style={GlobalStyles.text}>
+              {formattedDate}
+            </Text>
+          </View>
           <Text style={GlobalStyles.title}>
-          Welcome, Chris!
+          Let's get after it, Chris!
           </Text>
         <View style={GlobalStyles.imageWrapper}>
           <Image
@@ -28,10 +39,6 @@ export default function Index() {
             style={GlobalStyles.featuredImage}
             resizeMode="cover"
           />
-        </View>
-
-        <View style={GlobalStyles.centeredScreen}>
-          <Text style={GlobalStyles.title}>Welcome to Woolsey Fitness!</Text>
         </View>
      </SafeAreaView>
     </ScrollView>
