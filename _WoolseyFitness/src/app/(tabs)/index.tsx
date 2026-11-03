@@ -20,7 +20,7 @@ export default function Index() {
           />
           </View>
           <Text style={GlobalStyles.title}>
-          Welcome, Christopher!
+          Welcome, Chris!
           </Text>
         <View style={GlobalStyles.imageWrapper}>
           <Image

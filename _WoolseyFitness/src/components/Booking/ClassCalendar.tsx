@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   Pressable,
+  Alert,
 } from "react-native";
 
 const dummyClasses = {
@@ -14,7 +15,7 @@ const dummyClasses = {
       id: "1",
       name: "Body Blasst",
       time: "5:00 AM",
-      instructor: "Christopher",
+      instructor: "Chris",
       duration: "50 min",
     },
     {
@@ -28,7 +29,7 @@ const dummyClasses = {
       id: "5",
       name: "WzF 4X15 Boot Camp",
       time: "9:00 AM",
-      instructor: "Christopher",
+      instructor: "Chris",
       duration: "45 min",
     },
     {
@@ -67,7 +68,7 @@ const dummyClasses = {
       id: "4",
       name: "WzF 4X15 Boot Camp",
       time: "8:00 AM",
-      instructor: "Christopher",
+      instructor: "Chris",
       duration: "45 min",
     },
   ],
@@ -79,17 +80,34 @@ export default function ClassCalendar() {
   const selectedClasses =
     dummyClasses[selectedDate as keyof typeof dummyClasses] || [];
 
-  const handleBookClass = (
-    classItem: (typeof dummyClasses)[keyof typeof dummyClasses][number]
-  ) => {
-    console.log(
-      "Booking class:",
-      classItem.name,
-      classItem.time,
-      "on",
-      selectedDate
-    );
-  };
+    const handleBookClass = (
+        classItem: (typeof dummyClasses)[keyof typeof dummyClasses][number]
+      ) => {
+        Alert.alert(
+          "Confirm Booking",
+          `Would you like to book ${classItem.name}?
+      
+      Time: ${classItem.time}
+      Duration: ${classItem.duration}
+      Instructor: ${classItem.instructor}
+      Date: ${selectedDate}`,
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Confirm",
+              onPress: () => {
+                Alert.alert(
+                  "Booking Confirmed!",
+                  `You've booked ${classItem.name} for ${classItem.time}.`
+                );
+              },
+            },
+          ]
+        );
+      };
 
   return (
     <View style={styles.container}>
@@ -125,7 +143,7 @@ export default function ClassCalendar() {
 
         {selectedClasses.length > 0 ? (
           selectedClasses.map((classItem) => (
-            <View key={classItem.id} style={styles.classCard}>
+            <View key={classItem.id} style={styles.classCalendarCard}>
               {/* Class Information */}
               <View style={styles.classInfo}>
                 <Text style={styles.className}>
@@ -191,7 +209,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  classCard: {
+  classCalendarCard: {
     backgroundColor: "#1A1A1A",
     borderRadius: 10,
     padding: 15,
