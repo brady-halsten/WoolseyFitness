@@ -43,22 +43,25 @@ export default function About() {
             style={bioImage.image}
           />
           <Text style={bioImage.bioText}>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit.
-            Ad deserunt eiusmod accusamus est cum. Quibusdam duis dolor
-            labore ullamco mollit in facere.
+          Allow me to reintroduce myself…. My name is Christopher Hans Woolsey,
+          and to all my new haters I’ll give you a free pass; it’s not that you 
+          forget, you just never knew. I AM HIM. 🙃😘
 
-            {"\n\n"}
-            Assumenda aute sunt sunt eligendi facere et qui qui. Aut est
-            aliquip et possimus eiusmod amet animi. Exercitation quos et
-            aut blanditiis minim dolore vero voluptas pariatur dolorem
-            deserunt minim. Quod facilis at tempore id officia sunt officia
-            dolore ducimus aute laborum. Labore eu nulla dolor at sunt odio
-            ipsum eum et omnis voluptas.
+          {"\n\n"}
 
-            {"\n\n"}
-            Ex officia officia veniam et fugiat cillum eiusmod sint in
-            atque et voluptatum. Eos facilis enim laboris blanditiis
-            adipiscing. In minus imperdiet est et fugiat.
+          What you see is what you get, we really are putting in work, getting 
+          after it; and living our best lives.
+          So if you’re on the fence and you’re looking for some corporate, 
+          franchised, watered down revolving door of that same old bullshit, 
+          just repackaged with a shiny new bow - keep on walking.
+          {"\n\n"}
+          
+          High vibes, good energy and better people. So if you don’t belong,
+          don’t be long 🤪 I’m doing my own thing, and I’m doing it better 
+          than you could even dream it ✌🏼
+
+
+            
           </Text>
         </View>
 
