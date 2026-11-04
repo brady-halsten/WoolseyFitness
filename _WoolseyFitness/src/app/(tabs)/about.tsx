@@ -3,7 +3,7 @@ import { Text, View, Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GlobalStyles, bioImage } from "@/constants/styles";
 import { Sizes } from "@/constants/theme";
-import { getFormattedDate } from "../utils/date";
+import { getFormattedDate } from "../../utils/date";
 
 export default function About() {
   return (

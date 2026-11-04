@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { GlobalStyles } from "@/constants/styles";
 import { Sizes } from "@/constants/theme";
-import { getFormattedDate } from "@/app/utils/date";
+import { getFormattedDate } from "@/utils/date";
 
 export default function RoutinesIndex() {
   return (

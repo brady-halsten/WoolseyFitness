@@ -1,20 +1,33 @@
-import {Link} from "expo-router";
-import { Text, View, Image, StyleSheet,ScrollView} from "react-native";
+
+import { View, Text, Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+
 import { GlobalStyles } from "@/constants/styles";
 import { Sizes } from "@/constants/theme";
+import { getFormattedDate } from "@/utils/date";
+
+import FeaturedClassCard from "@/components/home/FeaturedClassCard";
+
+import {
+  dummyMember,
+  dummyBooking,
+} from "@/data/dummyMember";
+
+import { canBookClasses } from "@/utils/memberUtils";
 
 export default function Index() {
-  const today = new Date();
+  const router = useRouter();
 
-const formattedDate = today.toLocaleDateString("en-US", {
-  weekday: "long",
-  month: "long",
-  day: "numeric",
-});
+  // Temporary member and booking data
+  const upcomingBooking = dummyBooking;
+  const memberCanBook = canBookClasses(dummyMember);
+
   return (
-  <ScrollView style={GlobalStyles.screen}>
-  <SafeAreaView style={GlobalStyles.screen}>
+    <SafeAreaView style={GlobalStyles.screen}>
+      <ScrollView style={GlobalStyles.screen}>
+        
+        {/* Header / Logo */}
         <View style={GlobalStyles.headerRow}>
           <Image
             source={require("@/assets/images/wzf_new_logo.jpg")}
@@ -24,24 +37,42 @@ const formattedDate = today.toLocaleDateString("en-US", {
               resizeMode: "contain",
             }}
           />
-          </View>
-          <View>
-            <Text style={GlobalStyles.dateText}>
-              {formattedDate}
-            </Text>
-          </View>
-          <Text style={GlobalStyles.title}>
-          Let's get after it, Chris!
-          </Text>
-        <View style={GlobalStyles.imageWrapper}>
-          <Image
-            source={require("@/assets/images/FeaturedWorkoutImage.png")}
-            style={GlobalStyles.featuredImage}
-            resizeMode="cover"
-          />
         </View>
-     </SafeAreaView>
-    </ScrollView>
-   );
-}
 
+        {/* Current Date */}
+        <View>
+          <Text style={GlobalStyles.dateText}>
+            {getFormattedDate()}
+          </Text>
+        </View>
+
+        {/* Welcome Message */}
+        <Text style={GlobalStyles.title}>
+          Let's get after it, {dummyMember.firstName}!
+        </Text>
+
+          {/* Featured Class Card */}
+          {upcomingBooking ? (
+            <FeaturedClassCard
+              image={require("@/assets/images/FeaturedWorkoutImage.png")}
+              label="YOUR NEXT CLASS"
+              title={upcomingBooking.name}
+              subtitle={`${upcomingBooking.date} · ${upcomingBooking.time}`}
+              instructor={upcomingBooking.instructor}
+              onPress={() => router.push("/schedule")}
+            />
+          ) : memberCanBook ? (
+            <FeaturedClassCard
+              image={require("@/assets/images/FeaturedWorkoutImage.png")}
+              label="RECOMMENDED FOR YOU"
+              title="Strength & Sculpt"
+              subtitle="Explore your next workout."
+              onPress={() => router.push("/schedule")}
+            />
+          ) : null}
+
+
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
