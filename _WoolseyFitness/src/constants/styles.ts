@@ -25,7 +25,7 @@ export const GlobalStyles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
   },
 
   content: {
@@ -124,6 +124,26 @@ export const GlobalStyles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 10,
 
+  },
+  
+});
+
+export const avatarImage = StyleSheet.create({
+  avatarImageContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    paddingHorizontal: Spacing.md,
+    marginVertical: Spacing.md,
+    gap: Spacing.md,
+  },
+  image: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    resizeMode: "cover",
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    flexShrink: 0,
   }
 });
 

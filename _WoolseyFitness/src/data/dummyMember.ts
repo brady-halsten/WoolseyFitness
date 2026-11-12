@@ -13,5 +13,5 @@ export const dummyBooking: ClassBooking | null = {
   name: "Reformer Strength",
   date: "November 6, 2026",
   time: "9:00 AM",
-  instructor: "Christopher Woolsey",
+  instructor: "Chris Woolsey",
 };
