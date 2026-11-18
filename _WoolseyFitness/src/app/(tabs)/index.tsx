@@ -8,8 +8,9 @@ import {
   Pressable,
   Linking,
 } from "react-native";
+import { useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import { GlobalStyles } from "@/constants/styles";
@@ -23,6 +24,8 @@ import {
   dummyMember,
   dummyBooking,
 } from "@/data/dummyMember";
+
+import { getProfileImage } from "@/data/profileStorage";
 
 import { canBookClasses } from "@/utils/memberUtils";
 import ClassCreditsBanner from "@/components/home/ClassCreditsBanner";
@@ -66,6 +69,27 @@ function ServiceTile({
 
 export default function Index() {
   const router = useRouter();
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+      useFocusEffect(
+        useCallback(() => {
+          let isActive = true;
+      
+          const loadProfileImage = async () => {
+            const savedImage = await getProfileImage();
+      
+            if (isActive) {
+              setProfileImage(savedImage);
+            }
+          };
+      
+          loadProfileImage();
+      
+          return () => {
+            isActive = false;
+          };
+        }, [])
+      );
 
   // Temporary member and booking data
   const upcomingBooking = dummyBooking;
@@ -100,6 +124,7 @@ export default function Index() {
           <AvatarImage
             firstName={dummyMember.firstName}
             lastName={dummyMember.lastName}
+            imageUri={profileImage}
             size={64}
             onPress={handleProfilePress}
           />
