@@ -5,7 +5,9 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  Pressable,
 } from "react-native";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -30,6 +32,8 @@ const categoryTitles: Record<string, string> = {
   "arms-abs-ass": "Arms x Abs x Ass",
   "justine-pilates": "Justine Pilates",
 };
+
+
 
 const springColors: Record<SpringColor, string> = {
   yellow: "#F4D03F",
@@ -220,6 +224,66 @@ export default function CategoryScreen() {
   const categoryTitle =
     categoryTitles[categoryId] ?? "Routine not found";
 
+    const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
+  const [currentStationIndex, setCurrentStationIndex] = useState(0);
+  const [completedRoundsInStation, setCompletedRoundsInStation] = useState(0);
+  const [isWorkoutComplete, setIsWorkoutComplete] = useState(false);
+
+  const currentStation = routine?.stations[currentStationIndex];
+
+  const totalRounds = routine?.stations.reduce(
+    (total, station) => total + station.rounds,
+    0
+  ) ?? 0;
+
+  const completedRoundsBeforeCurrent = routine
+    ? routine.stations
+        .slice(0, currentStationIndex)
+        .reduce((total, station) => total + station.rounds, 0)
+    : 0;
+
+  const totalCompletedRounds =
+    completedRoundsBeforeCurrent + completedRoundsInStation;
+
+  const progressPercent = totalRounds > 0
+    ? (totalCompletedRounds / totalRounds) * 100
+    : 0;
+
+  const handleStartWorkout = () => {
+    setCurrentStationIndex(0);
+    setCompletedRoundsInStation(0);
+    setIsWorkoutComplete(false);
+    setIsWorkoutStarted(true);
+  };
+
+  const handleCompleteRound = () => {
+    if (!currentStation || !routine) return;
+
+    const nextCompletedRound = completedRoundsInStation + 1;
+
+    if (nextCompletedRound < currentStation.rounds) {
+      setCompletedRoundsInStation(nextCompletedRound);
+      return;
+    }
+
+    // All rounds at this station are complete.
+    if (currentStationIndex < routine.stations.length - 1) {
+      setCurrentStationIndex((current) => current + 1);
+      setCompletedRoundsInStation(0);
+    } else {
+      // Final station and final round are complete.
+      setCompletedRoundsInStation(nextCompletedRound);
+      setIsWorkoutComplete(true);
+    }
+  };
+
+  const handleEndWorkout = () => {
+    setIsWorkoutStarted(false);
+    setIsWorkoutComplete(false);
+    setCurrentStationIndex(0);
+    setCompletedRoundsInStation(0);
+  };
+
   return (
     <SafeAreaView style={GlobalStyles.screen}>
       <ScrollView
@@ -282,8 +346,23 @@ export default function CategoryScreen() {
           )}
         </View>
 
-        {routine ? (
+        {routine && !isWorkoutStarted && (
           <View style={styles.stationsContainer}>
+            <Pressable
+              style={styles.startWorkoutButton}
+              onPress={handleStartWorkout}
+              accessibilityRole="button"
+            >
+              <Ionicons
+                name="play-circle-outline"
+                size={22}
+                color="#102629"
+              />
+              <Text style={styles.startWorkoutButtonText}>
+                START WORKOUT
+              </Text>
+            </Pressable>
+
             {routine.stations.map((station) => (
               <StationCard
                 key={station.id}
@@ -291,16 +370,157 @@ export default function CategoryScreen() {
               />
             ))}
           </View>
-        ) : (
+        )}
+
+        {routine && isWorkoutStarted && !isWorkoutComplete && currentStation && (
+          <View style={styles.workoutContainer}>
+            {/* Overall Progress */}
+            <View style={styles.progressCard}>
+              <View style={styles.progressHeader}>
+                <Text style={styles.progressTitle}>
+                  WORKOUT PROGRESS
+                </Text>
+
+                <Text style={styles.progressCount}>
+                  {totalCompletedRounds} / {totalRounds} ROUNDS
+                </Text>
+              </View>
+
+              <View style={styles.progressTrack}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${progressPercent}%` },
+                  ]}
+                />
+              </View>
+
+              <Text style={styles.progressSubtitle}>
+                Station {currentStationIndex + 1} of {routine.stations.length}
+              </Text>
+            </View>
+
+            {/* Current Station */}
+            <View style={styles.stationCard}>
+              <View style={styles.stationHeader}>
+                <View style={styles.stationTitleContainer}>
+                  <Text style={styles.stationNumber}>
+                    {currentStation.name.toUpperCase()}
+                  </Text>
+
+                  <Text style={styles.stationSubtitle}>
+                    Complete all exercises before moving on
+                  </Text>
+                </View>
+
+                <View style={styles.roundBadge}>
+                  <Text style={styles.roundBadgeText}>
+                    {completedRoundsInStation + 1} OF {currentStation.rounds}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Current Station Exercises */}
+              {currentStation.groups.map((group, index) => (
+                <ExerciseGroupCard
+                  key={`${currentStation.id}-group-${index}`}
+                  group={group}
+                />
+              ))}
+
+              {/* Round Instructions */}
+              <View style={styles.roundInstruction}>
+                <Ionicons
+                  name="information-circle-outline"
+                  size={18}
+                  color="#5DD1DC"
+                />
+
+                <Text style={styles.roundInstructionText}>
+                  Complete all exercises above before marking this round complete.
+                </Text>
+              </View>
+
+              {/* Complete Round Button */}
+              <Pressable
+                style={styles.completeRoundButton}
+                onPress={handleCompleteRound}
+                accessibilityRole="button"
+              >
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={21}
+                  color="#102629"
+                />
+
+                <Text style={styles.completeRoundButtonText}>
+                  COMPLETE ROUND
+                </Text>
+              </Pressable>
+            </View>
+
+            <Pressable
+              style={styles.endWorkoutButton}
+              onPress={handleEndWorkout}
+              accessibilityRole="button"
+            >
+              <Text style={styles.endWorkoutButtonText}>
+                End Workout
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
+        {routine && isWorkoutComplete && (
+          <View style={styles.completionCard}>
+            <Ionicons
+              name="checkmark-circle"
+              size={66}
+              color="#5DD1DC"
+            />
+
+            <Text style={styles.completionTitle}>
+              WORKOUT COMPLETE!
+            </Text>
+
+            <Text style={styles.completionSubtitle}>
+              Great work. You've completed all four stations.
+            </Text>
+
+            <View style={styles.completionStats}>
+              <Text style={styles.completionStatNumber}>
+                {totalRounds}
+              </Text>
+
+              <Text style={styles.completionStatLabel}>
+                TOTAL ROUNDS COMPLETED
+              </Text>
+            </View>
+
+            <Pressable
+              style={styles.startWorkoutButton}
+              onPress={handleEndWorkout}
+              accessibilityRole="button"
+            >
+              <Text style={styles.startWorkoutButtonText}>
+                BACK TO PROGRAM
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
+        {!routine && (
           <View style={styles.comingSoon}>
             <Ionicons
               name="barbell-outline"
               size={42}
               color="#5DD1DC"
             />
+
             <Text style={styles.comingSoonTitle}>
               WORKOUT COMING SOON
             </Text>
+
             <Text style={styles.comingSoonText}>
               We're preparing this routine. Check back soon!
             </Text>
@@ -366,6 +586,160 @@ const styles = StyleSheet.create({
   stationsContainer: {
     paddingHorizontal: 16,
     gap: 16,
+  },
+  workoutContainer: {
+    paddingHorizontal: 16,
+    gap: 16,
+  },
+
+  startWorkoutButton: {
+    backgroundColor: "#5DD1DC",
+    borderRadius: 14,
+    paddingVertical: 17,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+
+  startWorkoutButtonText: {
+    color: "#102629",
+    fontSize: 13,
+    fontWeight: "900",
+    letterSpacing: 1,
+  },
+
+  progressCard: {
+    backgroundColor: "#20272A",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#343D40",
+    gap: 10,
+  },
+
+  progressHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  progressTitle: {
+    color: "#5DD1DC",
+    fontSize: 11,
+    fontWeight: "900",
+    letterSpacing: 1,
+  },
+
+  progressCount: {
+    color: "#FFFFFF",
+    fontSize: 11,
+    fontWeight: "800",
+  },
+
+  progressTrack: {
+    height: 8,
+    backgroundColor: "#394347",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#5DD1DC",
+    borderRadius: 5,
+  },
+
+  progressSubtitle: {
+    color: "#AAAAAA",
+    fontSize: 11,
+  },
+
+  roundInstruction: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 9,
+    marginTop: 18,
+    marginBottom: 14,
+  },
+
+  roundInstructionText: {
+    color: "#AAAAAA",
+    fontSize: 11,
+    lineHeight: 17,
+    flex: 1,
+  },
+
+  completeRoundButton: {
+    backgroundColor: "#5DD1DC",
+    borderRadius: 12,
+    paddingVertical: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 9,
+  },
+
+  completeRoundButtonText: {
+    color: "#102629",
+    fontSize: 12,
+    fontWeight: "900",
+    letterSpacing: 1,
+  },
+
+  endWorkoutButton: {
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+
+  endWorkoutButtonText: {
+    color: "#AAAAAA",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  completionCard: {
+    marginHorizontal: 16,
+    padding: 28,
+    backgroundColor: "#20272A",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#343D40",
+    alignItems: "center",
+    gap: 16,
+  },
+
+  completionTitle: {
+    color: "#FFFFFF",
+    fontSize: 21,
+    fontWeight: "900",
+    textAlign: "center",
+  },
+
+  completionSubtitle: {
+    color: "#AAAAAA",
+    fontSize: 13,
+    textAlign: "center",
+    lineHeight: 20,
+  },
+
+  completionStats: {
+    alignItems: "center",
+    marginVertical: 10,
+  },
+
+  completionStatNumber: {
+    color: "#5DD1DC",
+    fontSize: 38,
+    fontWeight: "900",
+  },
+
+  completionStatLabel: {
+    color: "#AAAAAA",
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 1,
   },
 
   stationCard: {
