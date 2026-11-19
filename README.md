@@ -1,6 +1,6 @@
-##Woolsey Fitness
+# Woolsey Fitness
 
-#The premier, official app for the Woolsey Fitness brand, based out of Livermore, California!
+## The premier, official app for the Woolsey Fitness brand, based out of Livermore, California!
 
 Woolsey Fitness brings the studio experience directly to members’ fingertips. Designed to complement the Woolsey Fitness studio, the app provides a centralized place for members to explore classes, manage their fitness experience, and access guided workout programs.
 
