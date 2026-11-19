@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "react-native-calendars";
 import {
   View,
@@ -9,168 +9,58 @@ import {
   Alert,
 } from "react-native";
 
-type ClassItem = {
-  id: string;
-  date: string;
-  name: string;
-  time: string;
-  instructor: string;
-  duration: string;
-};
+import {
+  ClassItem,
+  getBookings,
+  addBooking,
+  removeBooking,
+  getClassDateTime,
+} from "../../data/bookingStorage";
 
 // Recurring weekly mock schedule
-const weeklySchedule: Record<number, Omit<ClassItem, "id" | "date">[]> = {
-  // Sunday
+const weeklySchedule: Record<
+  number,
+  Omit<ClassItem, "id" | "date">[]
+> = {
   0: [],
 
-  // Monday
   1: [
-    {
-      name: "Body Blasst",
-      time: "6:00 AM",
-      instructor: "Chris",
-      duration: "50 min",
-    },
-    {
-      name: "Reformer x Strength",
-      time: "8:00 AM",
-      instructor: "Justine",
-      duration: "50 min",
-    },
-    {
-      name: "WzF Open Gym",
-      time: "1:00 PM",
-      instructor: "None",
-      duration: "60 min",
-    },
+    { name: "Body Blasst", time: "6:00 AM", instructor: "Chris", duration: "50 min" },
+    { name: "Reformer x Strength", time: "8:00 AM", instructor: "Justine", duration: "50 min" },
+    { name: "WzF Open Gym", time: "1:00 PM", instructor: "None", duration: "60 min" },
   ],
 
-  // Tuesday
   2: [
-    {
-      name: "Body Blasst",
-      time: "5:00 AM",
-      instructor: "Chris",
-      duration: "50 min",
-    },
-    {
-      name: "Abs Arms and Ass",
-      time: "7:00 AM",
-      instructor: "Justine",
-      duration: "45 min",
-    },
-    {
-      name: "WzF 4X15 Boot Camp",
-      time: "9:00 AM",
-      instructor: "Chris",
-      duration: "45 min",
-    },
-    {
-      name: "WzF Open Gym",
-      time: "1:00 PM",
-      instructor: "None",
-      duration: "60 min",
-    },
-    {
-      name: "WzF Open Gym",
-      time: "2:00 PM",
-      instructor: "None",
-      duration: "60 min",
-    },
-    {
-      name: "WzF Open Gym",
-      time: "3:00 PM",
-      instructor: "None",
-      duration: "60 min",
-    },
+    { name: "Body Blasst", time: "5:00 AM", instructor: "Chris", duration: "50 min" },
+    { name: "Abs Arms and Ass", time: "7:00 AM", instructor: "Justine", duration: "45 min" },
+    { name: "WzF 4X15 Boot Camp", time: "9:00 AM", instructor: "Chris", duration: "45 min" },
+    { name: "WzF Open Gym", time: "1:00 PM", instructor: "None", duration: "60 min" },
+    { name: "WzF Open Gym", time: "2:00 PM", instructor: "None", duration: "60 min" },
+    { name: "WzF Open Gym", time: "3:00 PM", instructor: "None", duration: "60 min" },
   ],
 
-  // Wednesday
   3: [
-    {
-      name: "WzF Pilates",
-      time: "7:00 AM",
-      instructor: "Chris",
-      duration: "50 min",
-    },
-    {
-      name: "Abs and Arms",
-      time: "10:00 AM",
-      instructor: "Justine",
-      duration: "50 min",
-    },
-    {
-      name: "Body Blasst",
-      time: "5:00 PM",
-      instructor: "Chris",
-      duration: "50 min",
-    },
+    { name: "WzF Pilates", time: "7:00 AM", instructor: "Chris", duration: "50 min" },
+    { name: "Abs and Arms", time: "10:00 AM", instructor: "Justine", duration: "50 min" },
+    { name: "Body Blasst", time: "5:00 PM", instructor: "Chris", duration: "50 min" },
   ],
 
-  // Thursday
   4: [
-    {
-      name: "WzF 4X15 Boot Camp",
-      time: "8:00 AM",
-      instructor: "Chris",
-      duration: "45 min",
-    },
-    {
-      name: "Arms x Abs",
-      time: "10:00 AM",
-      instructor: "Justine",
-      duration: "45 min",
-    },
-    {
-      name: "WzF Open Gym",
-      time: "1:00 PM",
-      instructor: "None",
-      duration: "60 min",
-    },
+    { name: "WzF 4X15 Boot Camp", time: "8:00 AM", instructor: "Chris", duration: "45 min" },
+    { name: "Arms x Abs", time: "10:00 AM", instructor: "Justine", duration: "45 min" },
+    { name: "WzF Open Gym", time: "1:00 PM", instructor: "None", duration: "60 min" },
   ],
 
-  // Friday
   5: [
-    {
-      name: "Body Blasst",
-      time: "6:00 AM",
-      instructor: "Chris",
-      duration: "50 min",
-    },
-    {
-      name: "Arms x Abs x Ass",
-      time: "8:00 AM",
-      instructor: "Justine",
-      duration: "45 min",
-    },
-    {
-      name: "WzF Open Gym",
-      time: "12:00 PM",
-      instructor: "None",
-      duration: "60 min",
-    },
+    { name: "Body Blasst", time: "6:00 AM", instructor: "Chris", duration: "50 min" },
+    { name: "Arms x Abs x Ass", time: "8:00 AM", instructor: "Justine", duration: "45 min" },
+    { name: "WzF Open Gym", time: "12:00 PM", instructor: "None", duration: "60 min" },
   ],
 
-  // Saturday
   6: [
-    {
-      name: "Body Blasst Boujee",
-      time: "8:00 AM",
-      instructor: "Chris",
-      duration: "50 min",
-    },
-    {
-      name: "WzF Pilates",
-      time: "9:30 AM",
-      instructor: "Justine",
-      duration: "50 min",
-    },
-    {
-      name: "WzF Open Gym",
-      time: "11:00 AM",
-      instructor: "None",
-      duration: "60 min",
-    },
+    { name: "Body Blasst Boujee", time: "8:00 AM", instructor: "Chris", duration: "50 min" },
+    { name: "WzF Pilates", time: "9:30 AM", instructor: "Justine", duration: "50 min" },
+    { name: "WzF Open Gym", time: "11:00 AM", instructor: "None", duration: "60 min" },
   ],
 };
 
@@ -205,21 +95,39 @@ const dummyClasses = generateDummyClasses();
 
 export default function ClassCalendar() {
   const [selectedDate, setSelectedDate] = useState("");
-  const [bookedClassIds, setBookedClassIds] = useState<string[]>([]);
+  const [bookedClasses, setBookedClasses] = useState<ClassItem[]>([]);
+
+  // Load saved bookings when the calendar mounts.
+  useEffect(() => {
+    let isActive = true;
+
+    const loadBookings = async () => {
+      const savedBookings = await getBookings();
+
+      if (isActive) {
+        setBookedClasses(savedBookings);
+      }
+    };
+
+    loadBookings();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const selectedClasses = dummyClasses[selectedDate] || [];
 
-  // Collect all booked classes across every calendar date
-  const bookedClasses = Object.values(dummyClasses)
-    .flat()
-    .filter((classItem) => bookedClassIds.includes(classItem.id))
-    .sort((a, b) =>
-      `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)
-    );
+  const sortedBookings = [...bookedClasses].sort((a, b) => {
+    const dateA = getClassDateTime(a)?.getTime() ?? 0;
+    const dateB = getClassDateTime(b)?.getTime() ?? 0;
+
+    return dateA - dateB;
+  });
 
   // Book a class
   const handleBookClass = (classItem: ClassItem) => {
-    if (bookedClassIds.includes(classItem.id)) {
+    if (bookedClasses.some((booking) => booking.id === classItem.id)) {
       return;
     }
 
@@ -238,16 +146,24 @@ Date: ${classItem.date}`,
         },
         {
           text: "Confirm",
-          onPress: () => {
-            setBookedClassIds((previous) => [
-              ...previous,
-              classItem.id,
-            ]);
+          onPress: async () => {
+            try {
+              const updatedBookings = await addBooking(classItem);
 
-            Alert.alert(
-              "Booking Confirmed!",
-              `You've booked ${classItem.name} for ${classItem.time}.`
-            );
+              setBookedClasses(updatedBookings);
+
+              Alert.alert(
+                "Booking Confirmed!",
+                `You've booked ${classItem.name} for ${classItem.time}.`
+              );
+            } catch (error) {
+              console.error("Error saving booking:", error);
+
+              Alert.alert(
+                "Booking Error",
+                "We couldn't save your booking. Please try again."
+              );
+            }
           },
         },
       ]
@@ -267,15 +183,24 @@ Date: ${classItem.date}`,
         {
           text: "Cancel Booking",
           style: "destructive",
-          onPress: () => {
-            setBookedClassIds((previous) =>
-              previous.filter((id) => id !== classItem.id)
-            );
+          onPress: async () => {
+            try {
+              const updatedBookings = await removeBooking(classItem.id);
 
-            Alert.alert(
-              "Booking Cancelled",
-              `Your booking for ${classItem.name} has been cancelled.`
-            );
+              setBookedClasses(updatedBookings);
+
+              Alert.alert(
+                "Booking Cancelled",
+                `Your booking for ${classItem.name} has been cancelled.`
+              );
+            } catch (error) {
+              console.error("Error cancelling booking:", error);
+
+              Alert.alert(
+                "Cancellation Error",
+                "We couldn't cancel your booking. Please try again."
+              );
+            }
           },
         },
       ]
@@ -316,11 +241,12 @@ Date: ${classItem.date}`,
 
         {selectedClasses.length > 0 ? (
           selectedClasses.map((classItem) => {
-            const isBooked = bookedClassIds.includes(classItem.id);
+            const isBooked = bookedClasses.some(
+              (booking) => booking.id === classItem.id
+            );
 
             return (
               <View key={classItem.id} style={styles.classCalendarCard}>
-                {/* Class Information */}
                 <View style={styles.classInfo}>
                   <Text style={styles.className}>
                     {classItem.name}
@@ -335,13 +261,10 @@ Date: ${classItem.date}`,
                   </Text>
 
                   {isBooked && (
-                    <Text style={styles.bookedLabel}>
-                      BOOKED
-                    </Text>
+                    <Text style={styles.bookedLabel}>BOOKED</Text>
                   )}
                 </View>
 
-                {/* Booking Button */}
                 {isBooked ? (
                   <Pressable
                     style={({ pressed }) => [
@@ -350,9 +273,7 @@ Date: ${classItem.date}`,
                     ]}
                     onPress={() => handleCancelBooking(classItem)}
                   >
-                    <Text style={styles.cancelButtonText}>
-                      Cancel
-                    </Text>
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
                   </Pressable>
                 ) : (
                   <Pressable
@@ -362,9 +283,7 @@ Date: ${classItem.date}`,
                     ]}
                     onPress={() => handleBookClass(classItem)}
                   >
-                    <Text style={styles.bookButtonText}>
-                      Book
-                    </Text>
+                    <Text style={styles.bookButtonText}>Book</Text>
                   </Pressable>
                 )}
               </View>
@@ -383,8 +302,8 @@ Date: ${classItem.date}`,
           My Bookings ({bookedClasses.length})
         </Text>
 
-        {bookedClasses.length > 0 ? (
-          bookedClasses.map((classItem) => (
+        {sortedBookings.length > 0 ? (
+          sortedBookings.map((classItem) => (
             <View key={classItem.id} style={styles.classCalendarCard}>
               <View style={styles.classInfo}>
                 <Text style={styles.className}>
@@ -399,9 +318,7 @@ Date: ${classItem.date}`,
                   Instructor: {classItem.instructor}
                 </Text>
 
-                <Text style={styles.bookedLabel}>
-                  BOOKED
-                </Text>
+                <Text style={styles.bookedLabel}>BOOKED</Text>
               </View>
 
               <Pressable
@@ -411,9 +328,7 @@ Date: ${classItem.date}`,
                 ]}
                 onPress={() => handleCancelBooking(classItem)}
               >
-                <Text style={styles.cancelButtonText}>
-                  Cancel
-                </Text>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
               </Pressable>
             </View>
           ))

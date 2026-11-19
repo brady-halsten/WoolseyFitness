@@ -20,14 +20,15 @@ import { getFormattedDate } from "@/utils/date";
 import FeaturedClassCard from "@/components/home/FeaturedClassCard";
 import { AvatarImage } from "@/components/profile/profileAvatar";
 
-import {
-  dummyMember,
-  dummyBooking,
-} from "@/data/dummyMember";
-
+import { dummyMember } from "@/data/dummyMember";
 import { getProfileImage } from "@/data/profileStorage";
 
-import { canBookClasses } from "@/utils/memberUtils";
+import {
+  ClassItem,
+  getBookings,
+  getNextUpcomingBooking,
+} from "../../data/bookingStorage";
+
 import ClassCreditsBanner from "@/components/home/ClassCreditsBanner";
 
 type ServiceTileProps = {
@@ -69,31 +70,36 @@ function ServiceTile({
 
 export default function Index() {
   const router = useRouter();
+
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [bookings, setBookings] = useState<ClassItem[]>([]);
 
-      useFocusEffect(
-        useCallback(() => {
-          let isActive = true;
-      
-          const loadProfileImage = async () => {
-            const savedImage = await getProfileImage();
-      
-            if (isActive) {
-              setProfileImage(savedImage);
-            }
-          };
-      
-          loadProfileImage();
-      
-          return () => {
-            isActive = false;
-          };
-        }, [])
-      );
+  // Refresh profile image and bookings whenever Home becomes active.
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-  // Temporary member and booking data
-  const upcomingBooking = dummyBooking;
-  const memberCanBook = canBookClasses(dummyMember);
+      const loadHomeData = async () => {
+        const [savedImage, savedBookings] = await Promise.all([
+          getProfileImage(),
+          getBookings(),
+        ]);
+
+        if (isActive) {
+          setProfileImage(savedImage);
+          setBookings(savedBookings);
+        }
+      };
+
+      loadHomeData();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
+
+  const upcomingBooking = getNextUpcomingBooking(bookings);
 
   const handleProfilePress = () => {
     router.push("/profile");
@@ -102,7 +108,7 @@ export default function Index() {
   const handleSchedulePress = () => {
     router.push("/schedule");
   };
-  /*console.log("ClassCreditsBanner:", ClassCreditsBanner);*/
+
   return (
     <SafeAreaView style={GlobalStyles.screen}>
       <ScrollView
@@ -136,18 +142,18 @@ export default function Index() {
         </Text>
 
         <View style={GlobalStyles.headerRow}>
-            {/* Member Greeting */}
-            <Text style={GlobalStyles.subtitle}>
-              Let's get after it, {dummyMember.firstName}!
-            </Text>
-          
-            <ClassCreditsBanner
+          {/* Member Greeting */}
+          <Text style={GlobalStyles.subtitle}>
+            Let's get after it, {dummyMember.firstName}!
+          </Text>
+
+          <ClassCreditsBanner
             credits={dummyMember.classCredits}
             onPress={() => router.push("/profile")}
-            />
+          />
         </View>
 
-        {/* Featured Class Card */}
+        {/* Next Booked Class */}
         {upcomingBooking ? (
           <FeaturedClassCard
             image={require("@/assets/images/FeaturedWorkoutImage.png")}
@@ -157,15 +163,15 @@ export default function Index() {
             instructor={upcomingBooking.instructor}
             onPress={handleSchedulePress}
           />
-        ) : memberCanBook ? (
+        ) : (
           <FeaturedClassCard
             image={require("@/assets/images/FeaturedWorkoutImage.png")}
-            label="RECOMMENDED FOR YOU"
-            title="Strength & Sculpt"
-            subtitle="Explore your next workout."
+            label="YOUR NEXT CLASS"
+            title="Nothing booked just yet"
+            subtitle="Explore the schedule and book your next workout!"
             onPress={handleSchedulePress}
           />
-        ) : null}
+        )}
 
         {/* Find Your Fit */}
         <View style={styles.servicesSection}>
@@ -219,53 +225,63 @@ export default function Index() {
             />
           </View>
         </View>
+
         {/* Stay Connected */}
-<View style={styles.socialSection}>
-  <Text style={styles.sectionEyebrow}>STAY CONNECTED</Text>
+        <View style={styles.socialSection}>
+          <Text style={styles.sectionEyebrow}>
+            STAY CONNECTED
+          </Text>
 
-  <View style={styles.socialCards}>
-    <Pressable
-      onPress={() =>
-        Linking.openURL("https://www.instagram.com/woolsey_fitness/")
-      }
-      accessibilityRole="link"
-      accessibilityLabel="Follow Woolsey Fitness on Instagram"
-      style={({ pressed }) => [
-        styles.socialCard,
-        styles.instagramCard,
-        pressed && styles.tilePressed,
-      ]}
-    >
-      <Ionicons name="logo-instagram" size={26} color="#FFFFFF" />
-      <View style={styles.socialText}>
-        <Text style={styles.socialTitle}>INSTAGRAM</Text>
-        <Text style={styles.socialSubtitle}>Follow our journey</Text>
-      </View>
-      <Ionicons name="open-outline" size={18} color="#FFFFFF" />
-    </Pressable>
+          <View style={styles.socialCards}>
+            <Pressable
+              onPress={() =>
+                Linking.openURL("https://www.instagram.com/woolsey_fitness/")
+              }
+              accessibilityRole="link"
+              accessibilityLabel="Follow Woolsey Fitness on Instagram"
+              style={({ pressed }) => [
+                styles.socialCard,
+                styles.instagramCard,
+                pressed && styles.tilePressed,
+              ]}
+            >
+              <Ionicons name="logo-instagram" size={26} color="#FFFFFF" />
 
-    <Pressable
-      onPress={() =>
-        Linking.openURL("https://www.yelp.com/biz/woolsey-fitness-livermore")
-      }
-      accessibilityRole="link"
-      accessibilityLabel="Leave Woolsey Fitness a Yelp review"
-      style={({ pressed }) => [
-        styles.socialCard,
-        styles.yelpCard,
-        pressed && styles.tilePressed,
-      ]}
-    >
-      <Ionicons name="star" size={26} color="#FFFFFF" />
-      <View style={styles.socialText}>
-        <Text style={styles.socialTitle}>YELP REVIEWS</Text>
-        <Text style={styles.socialSubtitle}>Share your experience</Text>
-      </View>
-      <Ionicons name="open-outline" size={18} color="#FFFFFF" />
-    </Pressable>
-  </View>
-</View>
+              <View style={styles.socialText}>
+                <Text style={styles.socialTitle}>INSTAGRAM</Text>
+                <Text style={styles.socialSubtitle}>
+                  Follow our journey
+                </Text>
+              </View>
 
+              <Ionicons name="open-outline" size={18} color="#FFFFFF" />
+            </Pressable>
+
+            <Pressable
+              onPress={() =>
+                Linking.openURL("https://www.yelp.com/biz/woolsey-fitness-livermore")
+              }
+              accessibilityRole="link"
+              accessibilityLabel="Leave Woolsey Fitness a Yelp review"
+              style={({ pressed }) => [
+                styles.socialCard,
+                styles.yelpCard,
+                pressed && styles.tilePressed,
+              ]}
+            >
+              <Ionicons name="star" size={26} color="#FFFFFF" />
+
+              <View style={styles.socialText}>
+                <Text style={styles.socialTitle}>YELP REVIEWS</Text>
+                <Text style={styles.socialSubtitle}>
+                  Share your experience
+                </Text>
+              </View>
+
+              <Ionicons name="open-outline" size={18} color="#FFFFFF" />
+            </Pressable>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -356,16 +372,17 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "600",
   },
+
   socialSection: {
     marginTop: 36,
     paddingHorizontal: 20,
     marginBottom: 20,
   },
-  
+
   socialCards: {
     gap: 12,
   },
-  
+
   socialCard: {
     minHeight: 76,
     borderRadius: 18,
@@ -374,27 +391,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 14,
   },
-  
+
   instagramCard: {
     backgroundColor: "#B83F83",
   },
-  
+
   yelpCard: {
     backgroundColor: "#C83232",
   },
-  
+
   socialText: {
     flex: 1,
     gap: 4,
   },
-  
+
   socialTitle: {
     color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "900",
     letterSpacing: 1,
   },
-  
+
   socialSubtitle: {
     color: "#FFFFFF",
     fontSize: 11,
