@@ -69,7 +69,7 @@ This project is actively being developed. Features and integrations are being im
 
 ### Brand
 
-** Woolsey Fitness **
-Livermore, California
+#### Woolsey Fitness
+#### Livermore, California
 
-Official digital experience for the Woolsey Fitness community.
+## Official digital experience for the Woolsey Fitness community.
